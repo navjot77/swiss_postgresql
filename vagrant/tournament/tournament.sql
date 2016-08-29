@@ -19,6 +19,7 @@ name text not null
 );
 
 CREATE TABLE tournament01.player_matches(
+match_id serial PRIMARY KEY ,
 winner_id INT REFERENCES tournament01.player_records(id),
 looser_id INT REFERENCES tournament01.player_records(id)
 );
@@ -27,9 +28,10 @@ CREATE VIEW players_standing AS
   SELECT
   id,
   name,
-  (SELECT count(tournament01.player_matches.winner_id)
-  from tournament01.player_matches
-  GROUP BY tournament01.player_matches.winner_id) as wins,
+  (SELECT
+  count(tournament01.player_matches.winner_id)
+   from tournament01.player_matches WHERE
+  tournament01.player_matches.winner_id = id) as wins,
   (select count(*) from tournament01.player_matches where
   id=tournament01.player_matches.winner_id or
   id=tournament01.player_matches.looser_id) as matches
